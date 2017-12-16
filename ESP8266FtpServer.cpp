@@ -104,11 +104,14 @@ void FtpServer::handleFTP()
   else if( readChar() > 0 )         // got response
   {
     if( cmdStatus == 3 )            // Ftp server waiting for user identity
+    {
       if( userIdentity() )
         cmdStatus = 4;
       else
         cmdStatus = 0;
+    }
     else if( cmdStatus == 4 )       // Ftp server waiting for user registration
+    {
       if( userPassword() )
       {
         cmdStatus = 5;
@@ -116,11 +119,14 @@ void FtpServer::handleFTP()
       }
       else
         cmdStatus = 0;
+    }
     else if( cmdStatus == 5 )       // Ftp server waiting for user command
+    {
       if( ! processCommand())
         cmdStatus = 0;
       else
         millisEndConnection = millis() + millisTimeOut;
+    }
   }
   else if (!client.connected() || !client)
   {
@@ -857,6 +863,7 @@ int8_t FtpServer::readChar()
     if( c == '\\' )
       c = '/';
     if( c != '\r' )
+    {
       if( c != '\n' )
       {
         if( iCL < FTP_CMD_SIZE )
@@ -897,6 +904,7 @@ int8_t FtpServer::readChar()
           iCL = 0;
         }
       }
+    }
     if( rc > 0 )
       for( uint8_t i = 0 ; i < strlen( command ); i ++ )
         command[ i ] = toupper( command[ i ] );
